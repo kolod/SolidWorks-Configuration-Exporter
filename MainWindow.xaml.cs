@@ -4,7 +4,7 @@ using System.Windows;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using Microsoft.WindowsAPICodePack.Dialogs;
-
+using System.Windows.Controls;
 
 namespace Configuration_Exporter
 {
@@ -61,7 +61,8 @@ namespace Configuration_Exporter
                 app.SetUserPreferenceIntegerValue((int)swUserPreferenceIntegerValue_e.swStepAP, 214);
 
                 // Get extention
-                string extention = FormatCombo.SelectedItem.ToString();
+                ComboBoxItem selectedItem = (ComboBoxItem) FormatCombo.SelectedItem;
+                string extention = selectedItem.Content.ToString();
 
                 // Get path
                 string newPath = DirectoryTextBox.Text;
