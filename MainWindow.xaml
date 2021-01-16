@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Configuration_Exporter"
         mc:Ignorable="d"
-        Title="Save All" Height="150" Width="300">
+        Title="Save All" 
+        Height="150" 
+        Width="300"
+        FontFamily="Segoe UI">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -39,10 +42,11 @@
             Grid.Row="1"
             Grid.Column="1"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
+            VerticalAlignment="Top"
             Content="Browse" 
-            Margin="5,5,5,5" Click="BrowseButton_Click"/>
+            Margin="3,3,5,3" Click="BrowseButton_Click" Padding="3,1"/>
         <Button
+            FontSize="26"
             Name="SaveButton"
             Grid.Row="2"
             Grid.Column="0"
@@ -50,16 +54,16 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Content="Save" 
-            Margin="5,5,5,5" 
+            Margin="5,3,5,5" 
             Click="SaveButton_Click" />
         <TextBox 
             TextWrapping="NoWrap"
             Name="DirectoryTextBox"
-            Margin="5,5,5,5" 
+            Margin="5,3,3,3" 
             Grid.Row="1" 
             Text="" 
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top" 
-            Height="{Binding ActualHeight, ElementName=BrowseButton, Mode=OneWay}"/>
+            Height="{Binding ActualHeight, ElementName=BrowseButton, Mode=OneWay}" Padding="5,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
     </Grid>
 </Window>

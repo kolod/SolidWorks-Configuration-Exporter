@@ -8,11 +8,11 @@ using System.Windows;
 // набор атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("Configuration Exporter")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Tool for batch exporting SolidWorks project configurations")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Oleksandr Kolodkin")]
 [assembly: AssemblyProduct("Configuration Exporter")]
-[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyCopyright("Oleksandr Kolodkin <alexandr.kolodkin@gmail.com>")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
