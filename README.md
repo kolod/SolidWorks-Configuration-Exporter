@@ -7,7 +7,7 @@ Tool for batch exporting all configurations of a SolidWorks project.
 * Start this program.
 * Select file extension.
 * Select output directory (if not selected will be used folder where original file saved).
-* Push Save button.
+* Push the Save button.
 
 ## Screenshot
 ![ScreenShot](https://github.com/kolod/SolidWorks-Configuration-Exporter/blob/main/screenshot.png?raw=true)
