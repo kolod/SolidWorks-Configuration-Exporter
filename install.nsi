@@ -11,6 +11,7 @@
 	ShowInstDetails show                                             # This will always show the installation details.
 	ShowUnInstDetails show                                           # This will always show the uninstallation details.
 	RequestExecutionLevel admin                                      # Request application privileges for Windows Vista
+	SetCompressor /SOLID lzma
 
 # Variables
 	Var StartMenuFolder # Start menu folder
@@ -20,19 +21,20 @@
 	!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
 # Pages
-	!insertmacro MUI_PAGE_WELCOME                 # Welcome to the installer page.
-	!insertmacro MUI_PAGE_LICENSE "LICENSE"       # License page
-	!insertmacro MUI_PAGE_DIRECTORY               # In which folder install page.
-
 	# Start Menu Folder Page Configuration
 	!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
 	!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\Configuration Exporter" 
 	!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Configuration Exporter"
 	
-	!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
+	# Run application after install
+	!define MUI_FINISHPAGE_RUN "$INSTDIR\Configuration Exporter.exe"
 	
-	!insertmacro MUI_PAGE_INSTFILES               # Installing page.
-	!insertmacro MUI_PAGE_FINISH                  # Finished installation page.
+	!insertmacro MUI_PAGE_WELCOME                                   # Welcome to the installer page.
+	!insertmacro MUI_PAGE_LICENSE "LICENSE"                         # License page
+	!insertmacro MUI_PAGE_DIRECTORY                                 # In which folder install page.
+	!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder    # Start menu page
+	!insertmacro MUI_PAGE_INSTFILES                                 # Installing page.
+	!insertmacro MUI_PAGE_FINISH                                    # Finished installation page.
 
 	!insertmacro MUI_UNPAGE_CONFIRM
 	!insertmacro MUI_UNPAGE_INSTFILES
@@ -42,16 +44,11 @@
 	!insertmacro MUI_LANGUAGE "Russian"
 
 # Installer Sections
-
-
-
-
-
-
 Section "Install"
 	SetShellVarContext all   # Set all or current user for $SMPROGRAMS
 	SetOutPath $INSTDIR      # define the output path for this file
-	SetOverwrite ifnewer     #
+	SetOverwrite ifnewer     # Owerwrite if newer
+	SetAutoClose false       # Disable autoclose uninstallation page
 
 	# define what to install and place it in the output path
 	File LICENSE
@@ -79,6 +76,7 @@ SectionEnd
 # Uninstaller Section
 Section "Uninstall"
 	SetShellVarContext all   # Set all or current user for $SMPROGRAMS
+	SetAutoClose false       # Disable autoclose uninstallation page
 	
 	Delete "$INSTDIR\*"
 	Delete "$INSTDIR\Uninstall.exe"
@@ -92,5 +90,4 @@ Section "Uninstall"
 	
 	DeleteRegKey SHCTX "Software\SW Configuration Exporter\StartMenuFolder"
 	DeleteRegKey SHCTX "Software\SW Configuration Exporter"
-	SetAutoClose false
 SectionEnd
