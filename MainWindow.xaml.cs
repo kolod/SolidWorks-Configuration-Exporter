@@ -28,7 +28,7 @@ namespace Configuration_Exporter
             // Get SolidWorks object
             if (app is null)
             {
-                app = (SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application"));
+                app = (SldWorks) Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application"));
                 if (app is null)
                 {
                     MessageBox.Show("Error: Can't connect to the SolidWorks application!");
@@ -78,9 +78,28 @@ namespace Configuration_Exporter
                 // Save all configurations
                 foreach (string configurationName in (string[])doc.GetConfigurationNames())
                 {
-                    string filename = newPath + System.IO.Path.DirectorySeparatorChar + configurationName + extention;
+                    // Activate configuration
                     doc.ShowConfiguration2(configurationName);
-                    doc.SaveAs2(filename, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, true, true);
+                    Configuration config = doc.ConfigurationManager.ActiveConfiguration;
+
+                    // Save all display states
+                    foreach (string displayStateName in (string[]) config.GetDisplayStates())
+                    {
+                        // Filename
+                        string filename = String.Format(
+                            "{0}{1}-{2}{3}",
+                            newPath + System.IO.Path.DirectorySeparatorChar,
+                            configurationName,
+                            displayStateName,
+                            extention
+                        );
+
+                        // Select display state
+                        config.ApplyDisplayState(displayStateName);
+
+                        // Save model
+                        doc.SaveAs2(filename, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, true, true);
+                    }
                 }
             }
         }
