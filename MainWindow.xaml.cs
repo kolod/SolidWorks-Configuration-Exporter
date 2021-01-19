@@ -25,7 +25,7 @@ namespace Configuration_Exporter
             InitializeComponent();
         }
 
-        private bool connect()
+        private bool Connect()
         {
             // Get SolidWorks object
             if (app is null)
@@ -57,7 +57,7 @@ namespace Configuration_Exporter
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (connect())
+            if (Connect())
             {
                 // Set step v214 as default
                 app.SetUserPreferenceIntegerValue((int)swUserPreferenceIntegerValue_e.swStepAP, 214);
@@ -108,9 +108,8 @@ namespace Configuration_Exporter
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new CommonOpenFileDialog();
-            dialog.IsFolderPicker = true;
-            if (connect()) dialog.InitialDirectory = path;
+            var dialog = new CommonOpenFileDialog{IsFolderPicker = true};
+            if (Connect()) dialog.InitialDirectory = path;
             CommonFileDialogResult result = dialog.ShowDialog();
             if (result is CommonFileDialogResult.Ok) DirectoryTextBox.Text = dialog.FileName;
         }
