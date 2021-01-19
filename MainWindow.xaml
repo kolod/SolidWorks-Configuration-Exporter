@@ -8,12 +8,15 @@
         Title="Save All" 
         Height="150" 
         Width="300"
-        FontFamily="Segoe UI">
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight"
+        FontFamily="Segoe UI" Loaded="Window_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -26,7 +29,7 @@
             Grid.ColumnSpan="2"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
-            Margin="5,5,5,5">
+            Margin="5,5,5,0">
             <ComboBoxItem Content=".step" IsSelected="True"/>
             <ComboBoxItem Content=".stl"/>
             <ComboBoxItem Content=".pdf"/>
@@ -44,26 +47,49 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             Content="Browse" 
-            Margin="3,3,5,3" Click="BrowseButton_Click" Padding="3,1"/>
+            Margin="3,3,5,0" Click="BrowseButton_Click" Padding="3,1"/>
+        <TextBox 
+            TextWrapping="NoWrap"
+            Name="DirectoryTextBox"
+            Margin="5,3,3,0" 
+            Grid.Row="1" 
+            Text="" 
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top" 
+            MinWidth="200"
+            Height="{Binding ActualHeight, ElementName=BrowseButton, Mode=OneWay}" 
+            Padding="5,0" 
+            HorizontalContentAlignment="Center" 
+            VerticalContentAlignment="Center"/>
         <Button
             FontSize="26"
             Name="SaveButton"
             Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="2"
+            Grid.RowSpan="1"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Content="Save" 
-            Margin="5,3,5,5" 
+            Margin="5,3" 
             Click="SaveButton_Click" />
-        <TextBox 
-            TextWrapping="NoWrap"
-            Name="DirectoryTextBox"
-            Margin="5,3,3,3" 
-            Grid.Row="1" 
-            Text="" 
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top" 
-            Height="{Binding ActualHeight, ElementName=BrowseButton, Mode=OneWay}" Padding="5,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBlock
+            Name="linkLabel"
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.RowSpan="1"
+            Grid.ColumnSpan="2"
+            Width="Auto"
+            Height="Auto" 
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Margin="5,3,5,5" >
+            <Hyperlink
+                NavigateUri="https://github.com/kolod/"
+                RequestNavigate="Hyperlink_RequestNavigate"
+                >
+                Oleksandr Kolodkin
+            </Hyperlink>
+        </TextBlock>
     </Grid>
 </Window>

@@ -5,6 +5,8 @@ using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Windows.Controls;
+using System.Diagnostics;
+using System.Windows.Navigation;
 
 namespace Configuration_Exporter
 {
@@ -111,6 +113,24 @@ namespace Configuration_Exporter
             if (connect()) dialog.InitialDirectory = path;
             CommonFileDialogResult result = dialog.ShowDialog();
             if (result is CommonFileDialogResult.Ok) DirectoryTextBox.Text = dialog.FileName;
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            // for .NET Core you need to add UseShellExecute = true
+            // see https://docs.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.useshellexecute#property-value
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // We know longer need to size to the contents.
+            ClearValue(SizeToContentProperty);
+
+            // Don't want our window to be able to get any smaller than this.
+            SetValue(MinWidthProperty, this.Width);
+            SetValue(MinHeightProperty, this.Height);
         }
     }
 }
