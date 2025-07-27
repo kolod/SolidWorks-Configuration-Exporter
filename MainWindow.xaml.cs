@@ -18,7 +18,9 @@ namespace Configuration_Exporter
     {
         private SldWorks app = null;
         private ModelDoc2 doc = null;
+        private ModelDocExtension extension = null;
         private string path = "";
+        private string filename = "";
 
         public MainWindow()
         {
@@ -49,8 +51,21 @@ namespace Configuration_Exporter
                 }
             }
 
+            // Get SolidWorks document extension
+            if (extension is null)
+            {
+                extension = doc.Extension;
+                if (extension is null)
+                {
+                    MessageBox.Show("Error: Can't get the SolidWorks document extension!");
+                    return false;
+                }
+            }
+
             // Get path
-            path = System.IO.Path.GetDirectoryName((string)doc.GetPathName());
+            string docunentPath = doc.GetPathName();
+            path = Path.GetDirectoryName(docunentPath);
+            filename = Path.GetFileNameWithoutExtension(docunentPath);
 
             return true;
         }
@@ -77,6 +92,13 @@ namespace Configuration_Exporter
                     return;
                 }
 
+                // Initialize error and warning counters
+                int errors = 0;
+                int warnings = 0;
+
+                // Configure advanced save options
+                IAdvancedSaveAsOptions advOptions = extension.GetAdvancedSaveAsOptions((int)swSaveWithReferencesOptions_e.swSaveWithReferencesOptions_None);
+
                 // Save all configurations
                 foreach (string configurationName in (string[])doc.GetConfigurationNames())
                 {
@@ -84,13 +106,44 @@ namespace Configuration_Exporter
                     doc.ShowConfiguration2(configurationName);
                     Configuration config = doc.ConfigurationManager.ActiveConfiguration;
 
-                    // Save all display states
-                    foreach (string displayStateName in (string[]) config.GetDisplayStates())
+                    // Get display states
+                    string[] displayStates = (string[]) config.GetDisplayStates();
+
+                    if (displayStates is null) return;
+                    if (displayStates.Length == 0) return;
+
+                    if (displayStates.Length == 1)
                     {
                         // Filename
-                        string filename = String.Format(
+                        string outputPath = String.Format(
                             "{0}{1}-{2}{3}",
                             newPath + System.IO.Path.DirectorySeparatorChar,
+                            this.filename,
+                            configurationName,
+                            extention
+                        );
+
+                        // Save model
+                        bool success = extension.SaveAs3(
+                            outputPath,
+                            (int)swSaveAsVersion_e.swSaveAsCurrentVersion,
+                            (int)swSaveAsOptions_e.swSaveAsOptions_Silent,
+                            null,
+                            advOptions,
+                            ref errors,
+                            ref warnings
+                        );
+
+                        continue;
+                    }
+
+                    // Save all display states
+                    foreach (string displayStateName in displayStates)
+                    {
+                        // Filename
+                        string outputPath = String.Format(
+                            "{0}{1}-{2}{3}",
+                            newPath + Path.DirectorySeparatorChar,
                             configurationName,
                             displayStateName,
                             extention
@@ -100,7 +153,16 @@ namespace Configuration_Exporter
                         config.ApplyDisplayState(displayStateName);
 
                         // Save model
-                        doc.SaveAs2(filename, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, true, true);
+                        // Save model
+                        bool success = extension.SaveAs3(
+                            outputPath,
+                            (int)swSaveAsVersion_e.swSaveAsCurrentVersion,
+                            (int)swSaveAsOptions_e.swSaveAsOptions_Silent,
+                            null,
+                            advOptions,
+                            ref errors,
+                            ref warnings
+                        );
                     }
                 }
             }
