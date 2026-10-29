@@ -14,7 +14,6 @@ using System.Windows;
 [assembly: AssemblyProduct("Configuration Exporter")]
 [assembly: AssemblyCopyright("Oleksandr Kolodkin <oleksandr.kolodkin@ukr.net>")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("en-US")]
 
 // Setting ComVisible to false makes the types in this assembly invisible
 // to COM components. If you need to access a type in this assembly from
