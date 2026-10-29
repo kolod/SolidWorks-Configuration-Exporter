@@ -43,6 +43,16 @@
 	!insertmacro MUI_LANGUAGE "English"
 	!insertmacro MUI_LANGUAGE "Russian"
 
+# Check that the .NET 10 Desktop Runtime is installed
+Function .onInit
+	FindFirst $0 $1 "$PROGRAMFILES64\dotnet\shared\Microsoft.WindowsDesktop.App\10.*"
+	FindClose $0
+	StrCmp $1 "" 0 found
+	MessageBox MB_YESNO|MB_ICONEXCLAMATION "Configuration Exporter requires the .NET 10 Desktop Runtime (x64), which is not installed.$\r$\n$\r$\nOpen the download page?" IDNO found
+	ExecShell "open" "https://dotnet.microsoft.com/download/dotnet/10.0"
+	found:
+FunctionEnd
+
 # Installer Sections
 Section "Install"
 	SetShellVarContext all   # Set all or current user for $SMPROGRAMS
@@ -53,9 +63,9 @@ Section "Install"
 	# define what to install and place it in the output path
 	File LICENSE
 	FILE "bin\Release\Configuration Exporter.exe"
-	FILE "bin\Release\Configuration Exporter.exe.config"
-	FILE "bin\Release\*.dll"
-	FILE "bin\Release\*.xml"
+	FILE "bin\Release\Configuration Exporter.dll"
+	FILE "bin\Release\Configuration Exporter.deps.json"
+	FILE "bin\Release\Configuration Exporter.runtimeconfig.json"
 	
 	# Store installation folder
 	WriteUninstaller "$INSTDIR\Uninstall.exe"

@@ -26,5 +26,5 @@ jobs:
           name: Configuration-Exporter
           path: |
             bin/Release/*.exe
-            bin/Release/*.exe.config
             bin/Release/*.dll
+            bin/Release/*.json
