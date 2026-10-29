@@ -2,6 +2,7 @@
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows;
 
 // General information about this assembly is provided by the following set
@@ -14,6 +15,7 @@ using System.Windows;
 [assembly: AssemblyProduct("Configuration Exporter")]
 [assembly: AssemblyCopyright("Oleksandr Kolodkin <oleksandr.kolodkin@ukr.net>")]
 [assembly: AssemblyTrademark("")]
+[assembly: SupportedOSPlatform("windows")]
 
 // Setting ComVisible to false makes the types in this assembly invisible
 // to COM components. If you need to access a type in this assembly from

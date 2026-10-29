@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.Win32;
 using System.Windows.Controls;
 using System.Diagnostics;
 using System.Windows.Navigation;
@@ -170,17 +170,16 @@ namespace Configuration_Exporter
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new CommonOpenFileDialog{IsFolderPicker = true};
+            var dialog = new OpenFolderDialog();
             if (Connect()) dialog.InitialDirectory = path;
-            CommonFileDialogResult result = dialog.ShowDialog();
-            if (result is CommonFileDialogResult.Ok) DirectoryTextBox.Text = dialog.FileName;
+            if (dialog.ShowDialog() == true) DirectoryTextBox.Text = dialog.FolderName;
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            // for .NET Core you need to add UseShellExecute = true
+            // .NET requires UseShellExecute = true to open a URL in the default browser
             // see https://docs.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.useshellexecute#property-value
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             e.Handled = true;
         }
 
