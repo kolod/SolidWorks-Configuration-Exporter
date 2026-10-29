@@ -16,24 +16,23 @@
   <ItemGroup>
     <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.1" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+    <PackageReference Include="Visiativ.SOLIDWORKS.Interop" Version="34.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>..\..\..\..\..\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.sldworks.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>..\..\..\..\..\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.swcommands.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>..\..\..\..\..\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.swconst.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Resource Include="sw.ico" />
   </ItemGroup>
+
+  <!-- Embed SOLIDWORKS interop types into the executable instead of shipping the interop DLLs -->
+  <Target Name="EmbedSolidWorksInteropTypes" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <ReferencePath Condition="'%(ReferencePath.NuGetPackageId)' == 'Visiativ.SOLIDWORKS.Interop'">
+        <EmbedInteropTypes>true</EmbedInteropTypes>
+      </ReferencePath>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' == 'Visiativ.SOLIDWORKS.Interop'" />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
