@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/release.yml
+      - install.nsi
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Set version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          $version = '${{ github.ref_name }}'.TrimStart('v')
+          if ($version -notmatch '^\d+(\.\d+){0,3}$') { throw "Tag '${{ github.ref_name }}' is not a version (expected v1.2 or v1.2.3)" }
+          $parts = $version.Split('.') + @('0', '0', '0')
+          $version = ($parts[0..3]) -join '.'
+          $file = 'Properties/AssemblyInfo.cs'
+          (Get-Content $file -Raw) `
+            -replace 'AssemblyVersion\("[^"]*"\)', "AssemblyVersion(`"$version`")" `
+            -replace 'AssemblyFileVersion\("[^"]*"\)', "AssemblyFileVersion(`"$version`")" |
+            Set-Content $file -NoNewline
+          Write-Host "Version: $version"
+
+      - name: Build
+        run: dotnet build "Configuration Exporter.csproj" -c Release
+
+      - name: Build installer
+        run: |
+          $makensis = Get-Command makensis -ErrorAction SilentlyContinue
+          if (-not $makensis) {
+            choco install nsis -y --no-progress
+            $env:PATH += ";${env:ProgramFiles(x86)}\NSIS"
+          }
+          makensis install.nsi
+
+      - name: Create zip
+        run: |
+          $files = @(
+            'bin/Release/Configuration Exporter.exe',
+            'bin/Release/Configuration Exporter.dll',
+            'bin/Release/Configuration Exporter.deps.json',
+            'bin/Release/Configuration Exporter.runtimeconfig.json',
+            'LICENSE'
+          )
+          Compress-Archive -Path $files -DestinationPath SolidWorks-Configuration-Exporter.zip
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create '${{ github.ref_name }}'
+          SolidWorks-Configuration-Exporter-Installer.exe
+          SolidWorks-Configuration-Exporter.zip
+          --title '${{ github.ref_name }}'
+          --generate-notes
+
+      - name: Upload artifacts
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: Release-preview
+          path: |
+            SolidWorks-Configuration-Exporter-Installer.exe
+            SolidWorks-Configuration-Exporter.zip
