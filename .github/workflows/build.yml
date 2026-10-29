@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build
+        run: dotnet build "Configuration Exporter.csproj" -c Release
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Configuration-Exporter
+          path: |
+            bin/Release/*.exe
+            bin/Release/*.exe.config
+            bin/Release/*.dll
