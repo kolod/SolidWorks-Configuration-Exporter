@@ -170,8 +170,10 @@ namespace Configuration_Exporter
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
+            // Selecting a folder doesn't need SolidWorks: start in the chosen folder or the last document's folder
             var dialog = new OpenFolderDialog();
-            if (Connect()) dialog.InitialDirectory = path;
+            if (Directory.Exists(DirectoryTextBox.Text)) dialog.InitialDirectory = DirectoryTextBox.Text;
+            else if (Directory.Exists(path)) dialog.InitialDirectory = path;
             if (dialog.ShowDialog() == true) DirectoryTextBox.Text = dialog.FolderName;
         }
 
