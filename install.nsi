@@ -12,6 +12,7 @@
 	ShowUnInstDetails show                                           # This will always show the uninstallation details.
 	RequestExecutionLevel admin                                      # Request application privileges for Windows Vista
 	SetCompressor /SOLID lzma
+	!define APP_MUTEX "SolidWorks-Configuration-Exporter"            # Created by the running application (see App.xaml.cs)
 
 # Variables
 	Var StartMenuFolder # Start menu folder
@@ -43,8 +44,25 @@
 	!insertmacro MUI_LANGUAGE "English"
 	!insertmacro MUI_LANGUAGE "Russian"
 
-# Check that the .NET 10 Desktop Runtime is installed
+# Ask to close the application while its mutex exists
+!macro CheckAppRunning
+	check_running:
+	System::Call 'kernel32::OpenMutex(i 0x00100000, i 0, t "${APP_MUTEX}") p .R0'
+	IntPtrCmp $R0 0 not_running
+	System::Call 'kernel32::CloseHandle(p R0)'
+	MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Configuration Exporter is running.$\r$\n$\r$\nClose it and click Retry to continue." IDRETRY check_running
+	Abort
+	not_running:
+!macroend
+
+Function un.onInit
+	!insertmacro CheckAppRunning
+FunctionEnd
+
+# Check that the application is not running and the .NET 10 Desktop Runtime is installed
 Function .onInit
+	!insertmacro CheckAppRunning
+
 	FindFirst $0 $1 "$PROGRAMFILES64\dotnet\shared\Microsoft.WindowsDesktop.App\10.*"
 	FindClose $0
 	StrCmp $1 "" 0 found
