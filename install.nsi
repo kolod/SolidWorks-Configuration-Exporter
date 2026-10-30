@@ -5,9 +5,12 @@
 # General
 	Unicode True
 	Name "Configuration Exporter"                                    # Name of the installer (usually the name of the application to install).
-	OutFile "SolidWorks-Configuration-Exporter-Installer.exe"        # name the installer
+	!ifndef OUTFILE
+		!define OUTFILE "SolidWorks-Configuration-Exporter-Installer.exe"
+	!endif
+	OutFile "${OUTFILE}"                                             # name the installer (override with makensis /DOUTFILE=...)
 	InstallDir "$PROGRAMFILES64\SW Configuration Exporter"           # Default installing folder ($PROGRAMFILES is Program Files folder).
-	InstallDirRegKey HKCU "Software\SW Configuration Exporter" ""    # Get installation folder from registry if available
+	InstallDirRegKey HKLM "Software\SW Configuration Exporter" ""    # Get installation folder from registry if available
 	ShowInstDetails show                                             # This will always show the installation details.
 	ShowUnInstDetails show                                           # This will always show the uninstallation details.
 	RequestExecutionLevel admin                                      # Request application privileges for Windows Vista
@@ -50,7 +53,7 @@
 	System::Call 'kernel32::OpenMutex(i 0x00100000, i 0, t "${APP_MUTEX}") p .R0'
 	IntPtrCmp $R0 0 not_running
 	System::Call 'kernel32::CloseHandle(p R0)'
-	MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Configuration Exporter is running.$\r$\n$\r$\nClose it and click Retry to continue." IDRETRY check_running
+	MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Configuration Exporter is running.$\r$\n$\r$\nClose it and click Retry to continue." /SD IDCANCEL IDRETRY check_running
 	Abort
 	not_running:
 !macroend
@@ -66,7 +69,7 @@ Function .onInit
 	FindFirst $0 $1 "$PROGRAMFILES64\dotnet\shared\Microsoft.WindowsDesktop.App\10.*"
 	FindClose $0
 	StrCmp $1 "" 0 found
-	MessageBox MB_YESNO|MB_ICONEXCLAMATION "Configuration Exporter requires the .NET 10 Desktop Runtime (x64), which is not installed.$\r$\n$\r$\nOpen the download page?" IDNO found
+	MessageBox MB_YESNO|MB_ICONEXCLAMATION "Configuration Exporter requires the .NET 10 Desktop Runtime (x64), which is not installed.$\r$\n$\r$\nOpen the download page?" /SD IDNO IDNO found
 	ExecShell "open" "https://dotnet.microsoft.com/download/dotnet/10.0"
 	found:
 FunctionEnd
@@ -85,13 +88,14 @@ Section "Install"
 	FILE "bin\Release\Configuration Exporter.deps.json"
 	FILE "bin\Release\Configuration Exporter.runtimeconfig.json"
 	
-	# Store installation folder
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
-	
+
+	# Store installation folder
+	WriteRegStr SHCTX "Software\SW Configuration Exporter" "" $INSTDIR
+
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-		
+
 		# Save path to shortcuts
-		WriteRegStr SHCTX "Software\SW Configuration Exporter" "" $INSTDIR
 		WriteRegStr SHCTX "Software\SW Configuration Exporter" "StartMenuFolder" $StartMenuFolder
 		
 		# Create shortcuts
