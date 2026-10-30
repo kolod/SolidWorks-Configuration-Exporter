@@ -10,6 +10,7 @@ Tool for batch exporting all configurations of a SolidWorks project.
 * Windows with the .NET 10 SDK.
 * SOLIDWORKS is not required for building: the API interop assemblies come from the `Visiativ.SOLIDWORKS.Interop` NuGet package and their types are embedded into the executable.
 * Build with `dotnet build "Configuration Exporter.csproj"` or open the solution in Visual Studio.
+* To build the installer and the portable ZIP into `artifacts/installer` (requires [NSIS](https://nsis.sourceforge.io)), run `pwsh Build-Installer.ps1`. Add `-Install` to install the new build over the installed copy right away.
 
 ## How to use
 * Start SolidWorks.
